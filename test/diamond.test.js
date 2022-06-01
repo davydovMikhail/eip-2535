@@ -105,7 +105,7 @@ describe('DiamondTest', async function () {
   it('selectors should be associated to facets correctly -- multiple calls to facetAddress function', async () => {
     assert.equal(
       addresses[0],
-      await diamondLoupeFacet.facetAddress('0x1f931c1c') // эта функция возвращает адрес грани, по слектору функции, если эта функция в фасете есть
+      await diamondLoupeFacet.facetAddress('0x1f931c1c') // эта функция возвращает адрес грани, по слектору функции, если эта функция в грани есть
     )
     assert.equal(
       addresses[1],
@@ -120,4 +120,6 @@ describe('DiamondTest', async function () {
       await diamondLoupeFacet.facetAddress('0xf2fde38b')
     )
   })
+
+  
 })
