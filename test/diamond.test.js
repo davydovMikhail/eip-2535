@@ -121,5 +121,36 @@ describe('DiamondTest', async function () {
     )
   })
 
-  
+  it ('added new facet and his funcs', async () => {
+    const FirstFacet = await ethers.getContractFactory('FirstFacet')
+    const firstFacet = await FirstFacet.deploy()
+    await firstFacet.deployed()
+    addresses.push(firstFacet.address)
+    const selectors = getSelectors(firstFacet)
+    const DiamondInitV2 = await ethers.getContractFactory('DiamondInitV2')
+    const diamondInitV2 = await DiamondInitV2.deploy()
+    await diamondInitV2.deployed()
+    let functionCallV2 = diamondInitV2.interface.encodeFunctionData('init')
+    const cut = []
+    console.log(`${FirstFacet} deployed: ${firstFacet.address}`)
+    cut.push({
+      facetAddress: firstFacet.address,
+      action: FacetCutAction.Add,
+      functionSelectors: getSelectors(firstFacet)
+    })
+    const diamondCut = await ethers.getContractAt('IDiamondCut', diamondAddress)
+    tx = await diamondCut.diamondCut(cut, diamondInitV2.address, functionCallV2)
+    console.log('Diamond cut tx: ', tx.hash)
+    receipt = await tx.wait()
+    if (!receipt.status) {
+      throw Error(`Diamond upgrade failed: ${tx.hash}`)
+    }
+  })
+
+  it('should test function call', async () => {
+    const firstFacet = await ethers.getContractAt('FirstFacet', diamondAddress)
+    await firstFacet.changeValue1(12)
+    const value = await firstFacet.getValue2()
+    console.log(value);
+  })
 })
